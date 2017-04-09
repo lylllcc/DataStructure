@@ -140,7 +140,7 @@ int Tree::findx(Node *subtree,char x)
 }
 int main()
 {
-    freopen("in.txt","r",stdin);
+    //freopen("in.txt","r",stdin);
     char x[10],xx;
     Tree t;
     while(cin>>x)
@@ -174,6 +174,7 @@ int main()
             cout<<"Postorder is:";
             t.last();
             cout<<".\n";
+            break;
         case 'F':
             cin>>xx;
             cout<<"The count of "<<xx<<" is "<<t.findx(xx)<<".\n";
