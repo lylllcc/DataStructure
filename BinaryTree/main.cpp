@@ -1,234 +1,186 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <queue>
-#include <stack>
 
 using namespace std;
 
-template <typename T>
-class BinaryTree;
-
-template <typename T>
-struct BinaryNode
+class Tree
 {
-    T data;
-    BinaryNode *left,*right;
-    BinaryNode(T d,BinaryNode *l = NULL,BinaryNode *r = NULL):data(d),right(r),left(l)
-    {}
-};
-
-template <typename T>
-class BinaryTree
-{
+    struct Node
+    {
+        char data;
+        Node *left,*right;
+        Node(char d,Node* l=NULL,Node* r=NULL)
+        {
+            data=d;
+            left=l;
+            right=r;
+        }
+    };
 private:
-    BinaryNode<T> *root;
-    T refValue;
-    void CreateBinaryTree(BinaryNode<T>* &subtree);
-    int Depth(const BinaryNode<T> *subtree) const;
-    int Leaf(const BinaryNode<T> *subtree) const;
-    int Size(const BinaryNode<T> *subtree) const;
-    void Pre(const BinaryNode<T> *subtree) const;
-    void Mid(const BinaryNode<T> *subtree) const;
-    void Last(const BinaryNode<T> *subtree) const;
-
-
-    int Find(char x,const BinaryNode<T> *subtree) const;
+    Node* root;
+    void create(Node* &subtree);
+    void pre(Node*subtree);
+    void mid(Node*subtree);
+    void last(Node *subtree);
+    int height(Node *subtree);
+    int leaf(Node *subtree);
+    int node(Node *subtree);
+    int findx(Node *subtree,char x);
+    void print(Node *subtree,int dep);
 public:
-    BinaryTree(T refVa,BinaryNode<T> *r = NULL): refValue(refVa),root(r)
-    {}
-    void CreateBinaryTree()
+    void create()
     {
-        CreateBinaryTree(root);
+        create(root);
     }
-    int Depth()
+    void mid()
     {
-        return Depth(root);
+        mid(root);
     }
-    int Leaf()
+    void pre()
     {
-        return Leaf(root);
+        pre(root);
     }
-    int Size()
+    void last()
     {
-        return Size(root);
+        last(root);
     }
-    void Pre()
+    int height()
     {
-        Pre(root);
+        return height(root);
     }
-    void Mid()
+    int leaf()
     {
-        Mid(root);
+        return leaf(root);
     }
-    void Last()
+    int node()
     {
-        Last(root);
+        return node(root);
     }
-    int Find(char x){
-       return Find(x,root);
+    int findx(char x)
+    {
+        return findx(root,x);
     }
-    void Print();
+    void print()
+    {
+        print(root,0);
+    }
 };
-template <typename T>
-void BinaryTree<T>::CreateBinaryTree(BinaryNode<T>* &subtree)
+void Tree::print(Node* subtree,int dep)
 {
-    T item;
-    cin>>item;
-    if(item != refValue)
-    {
-        subtree = new BinaryNode<T>(item);
-        CreateBinaryTree(subtree->left);
-        CreateBinaryTree(subtree->right);
-    }
+    if(subtree == NULL)
+        return ;
+    for(int i=0;i<dep;i++)
+        cout<<"  ";
+    cout<<subtree->data<<'\n';
+    print(subtree->left,dep+1);
+    print(subtree->right,dep+1);
 }
-
-template <typename T>
-int BinaryTree<T>::Depth(const BinaryNode<T> *subtree) const
+void Tree::create(Node* &subtree)
+{
+    char data;
+    cin>>data;
+    if(data=='#')
+        return ;
+    subtree =new Node(data);
+    create(subtree->left);
+    create(subtree->right);
+}
+void Tree::pre(Node *subtree)
+{
+    if(subtree == NULL)
+        return ;
+    cout<<subtree->data<<" ";
+    pre(subtree->left);
+    pre(subtree->right);
+}
+void Tree::mid(Node *subtree)
+{
+    if(subtree == NULL)
+        return ;
+    mid(subtree->left);
+    cout<<subtree->data<<" ";
+    mid(subtree->right);
+}
+void Tree::last(Node *subtree)
+{
+    if(subtree == NULL)
+        return ;
+    last(subtree->left);
+    last(subtree->right);
+    cout<<subtree->data<<" ";
+}
+int Tree::height(Node *subtree)
 {
     if(subtree == NULL)
         return 0;
-
-    return 1 + max(Depth(subtree->left),Depth(subtree->right));
+    return 1 + max(height(subtree->left),height(subtree->right));
 }
-
-
-template <typename T>
-int BinaryTree<T>::Leaf(const BinaryNode<T> *subtree) const
+int Tree::leaf(Node *subtree)
 {
     if(subtree == NULL)
         return 0;
     if(subtree->left == NULL && subtree->right == NULL)
-    {
         return 1;
-    }
-    return Leaf(subtree->left) + Leaf(subtree->right);
+    return leaf(subtree->left) + leaf(subtree->right);
 }
-
-template <typename T>
-int BinaryTree<T>::Size(const BinaryNode<T> *subtree) const
+int Tree::node(Node *subtree)
 {
     if(subtree == NULL)
         return 0;
-    return 1 + Size(subtree->left) + Size(subtree->right);
+    return node(subtree->left) + node(subtree->right) + 1;
 }
-
-template <typename T>
-void BinaryTree<T>::Pre(const BinaryNode<T> *subtree) const
-{
-    if(subtree == NULL)
-        return;
-    cout<<subtree->data<<" ";
-    Pre(subtree->left);
-    Pre(subtree->right);
-
-}
-template <typename T>
-void BinaryTree<T>::Mid(const BinaryNode<T> *subtree) const
-{
-    if(subtree == NULL)
-        return;
-    Mid(subtree->left);
-    cout<<subtree->data<<" ";
-    Mid(subtree->right);
-
-}
-template <typename T>
-void BinaryTree<T>::Last(const BinaryNode<T> *subtree) const
-{
-    if(subtree == NULL)
-        return;
-    Last(subtree->left);
-    Last(subtree->right);
-    cout<<subtree->data<<" ";
-}
-
-template <typename T>
-int BinaryTree<T>::Find(char x,const BinaryNode<T> *subtree) const
+int Tree::findx(Node *subtree,char x)
 {
     if(subtree == NULL)
         return 0;
     if(subtree->data == x)
-        return 1 + Find(x,subtree->left) +Find(x,subtree->right);
-    return Find(x,subtree->left) +Find(x,subtree->right);
-}
-
-template <typename T>
-void BinaryTree<T>::Print()
-{
-    stack<BinaryNode<char>*> s;
-    BinaryNode<char> *temp;
-    s.push(root);
-    int n = 0,le[100]={0} ,top = 1;
-    while(!s.empty()){
-            n = le[top];
-        for(int j=0;j<n;j++)
-            cout<<"  ";
-        temp = s.top();
-        top--;
-        s.pop();
-
-        cout<<temp->data<<endl;
-        if(temp->right != NULL){
-             s.push(temp->right);
-             top++;
-             le[top] = n + 1;
-        }
-        if(temp->left != NULL)
-        {
-              s.push(temp->left);
-              top++;
-              le[top] = n + 1;
-        }
-
-    }
+        return 1 + findx(subtree->left,x) + findx(subtree->right,x);
+    return findx(subtree->left,x) + findx(subtree->right,x);
 }
 int main()
 {
-    //freopen("in.txt","r",stdin);
-    BinaryTree<char> tree('#');
-    char tag[20];
-    char x[10];
-    while(cin>>tag)
+    freopen("in.txt","r",stdin);
+    char x[10],xx;
+    Tree t;
+    while(cin>>x)
     {
-        switch(tag[0])
+        switch(x[0])
         {
         case 'C':
-            tree.CreateBinaryTree();
-            cout<<"Created success!"<<endl;
+            t.create();
+            cout<<"Created success!\n";
             break;
         case 'H':
-            cout<<"Height="<< tree.Depth()<<".\n";
+            cout<<"Height="<<t.height()<<".\n";
             break;
         case 'L':
-            cout<<"Leaf="<< tree.Leaf() <<".\n";
+            cout<<"Leaf="<<t.leaf()<<".\n";
             break;
-
         case 'N':
-            cout<<"Nodes="<< tree.Size() <<".\n";
+            cout<<"Nodes="<<t.node()<<".\n";
             break;
         case '1':
             cout<<"Preorder is:";
-            tree.Pre();
-            cout <<".\n";
+            t.pre();
+            cout<<".\n";
             break;
-        case '2':
+         case '2':
             cout<<"Inorder is:";
-            tree.Mid();
-            cout <<".\n";
-             break;
+            t.mid();
+            cout<<".\n";
+            break;
         case '3':
             cout<<"Postorder is:";
-            tree.Last();
-            cout <<".\n";
-             break;
+            t.last();
+            cout<<".\n";
         case 'F':
-            cin>>x;
-            cout<<"The count of "<<x[0]<<" is "<<tree.Find(x[0])<<".\n";
+            cin>>xx;
+            cout<<"The count of "<<xx<<" is "<<t.findx(xx)<<".\n";
             break;
         case 'P':
-            cout<<"The tree is:"<<endl;
-            tree.Print();
+            cout<<"The tree is:\n";
+            t.print();
         }
     }
     return 0;
